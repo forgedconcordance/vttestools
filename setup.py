@@ -3,15 +3,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import io
 import os
-import re
 import sys
-from glob import glob
-from os.path import basename
-from os.path import dirname
-from os.path import join
-from os.path import splitext
 
 from setuptools import find_packages
 from setuptools import setup
@@ -19,12 +12,6 @@ from setuptools.command.install import install
 
 
 VERSION = '0.0.1'
-
-def read(*names, **kwargs):
-    return io.open(
-        join(dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ).read()
 
 
 class VerifyVersionCommand(install):
@@ -48,7 +35,7 @@ setup(
     author='William Gibb',
     author_email='williamgibb@gmail.com',
     url='https://github.com/forgedconcordance/vttestools',
-    packages=find_packages('vttes'),
+    packages=find_packages(include=('vttes',)),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -79,7 +66,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'vttestools= fuckery.cli:_main',
+            'vttestools= vttes.tools.cli:_main',
         ]
     },
     cmdclass={
