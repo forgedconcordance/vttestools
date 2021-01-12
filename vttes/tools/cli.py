@@ -3,6 +3,7 @@
 Tooling to manipulate table exports from vttes/better20
 '''
 import os
+import sys
 import json
 import argparse
 import collections
@@ -311,7 +312,9 @@ class VttES(cmd2.Cmd):
 
         self.poutput('Loaded Journal Tree')
 
-if __name__ == '__main__':
-    import sys
+def _main():
     c = VttES()
     sys.exit(c.cmdloop())
+
+if __name__ == '__main__':
+    _main()
