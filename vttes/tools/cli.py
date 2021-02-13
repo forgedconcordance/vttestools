@@ -42,9 +42,22 @@ map_parser_display_group.add_argument('-v', '--verbose', default=False, action='
 map_parser_modify_group = map_parser.add_argument_group(title='Modify args')
 mpmg_mux = map_parser_modify_group.add_mutually_exclusive_group()
 mpmg_mux.add_argument('-e', '--enable', nargs='+', type=int,
-                      help='Maps to enabled in output')
+                      help='Maps to enable in output')
 mpmg_mux.add_argument('-d', '--disable', nargs='+', type=int,
                       help='Maps to disable in output')
+
+roll_parser = argparse.ArgumentParser()
+roll_parser.add_argument('action', choices=['list', 'modify'], type=str.lower, default='list',
+                        help='action to take.')
+roll_parser_display_group = roll_parser.add_argument_group(title='Display args')
+roll_parser_display_group.add_argument('-v', '--verbose', default=False, action='store_true',
+                                      help='Display all rollable tables, including those which will not be output.')
+roll_parser_modify_group = roll_parser.add_argument_group(title='Modify args')
+rollmg_mux = roll_parser_modify_group.add_mutually_exclusive_group()
+rollmg_mux.add_argument('-e', '--enable', nargs='+', type=int,
+                      help='Table to enable in output')
+rollmg_mux.add_argument('-d', '--disable', nargs='+', type=int,
+                      help='Table to disable in output')
 
 journal_parser = argparse.ArgumentParser()
 journal_parser.add_argument('action', choices=['list', 'modify'], type=str.lower, default='list',
@@ -79,6 +92,8 @@ class VttES(cmd2.Cmd):
         self.raw_data = {}
         self.rootnode = v_node.Node(name='Root', idmap=self.id2info)
 
+        self.rolltables = collections.OrderedDict()
+
         # Make maxrepeats settable at runtime
         self.maxrepeats = 3
         self.add_settable(cmd2.Settable('maxrepeats', int, 'max repetitions for speak command'))
@@ -111,6 +126,49 @@ class VttES(cmd2.Cmd):
                 self.poutput(f"{mnfo.get('name')} -> {mnfo.get('archived')}")
         if args.journal:
             self.rootnode.pnode(items=args.verbose, cb=self.poutput)
+
+    @cmd2.with_argparser(roll_parser)
+    def do_tables(self, args):
+        if args.action == 'list':
+            dispdata = []
+            if args.verbose:
+                for indx, (k, v) in enumerate(self.rolltables.items()):
+                    obj = {'indx': indx,
+                           'name': v.get('name'),
+                           'keep': v.get('keep'),
+                           'id': k,
+                           }
+                    dispdata.append(obj)
+            else:
+                for indx, (k, v) in enumerate(self.rolltables.items()):
+                    if not v.get('keep'):
+                        continue
+                    obj = {'indx': indx,
+                           'name': v.get('name'),
+                           }
+                    dispdata.append(obj)
+            blob = tabulate.tabulate(dispdata,
+                                     headers='keys',
+                                     tablefmt='psql',
+                                     )
+            lines = blob.split('\n')
+            for line in lines:
+                self.poutput(line)
+
+        elif args.action == 'modify':
+            tabd = list(self.rolltables.values())
+            if args.enable:
+                for indx in args.enable:
+                    obj = tabd[indx]
+                    obj['keep'] = True
+                    self.poutput(f'Enabled table {obj.get("name")}')
+            if args.disable:
+                for indx in args.disable:
+                    obj = tabd[indx]
+                    obj['keep'] = False
+                    self.poutput(f'Disabled table {obj.get("name")}')
+        else:
+            self.poutput(f'unknown action: {args.action}')
 
     @cmd2.with_argparser(map_parser)
     def do_map(self, args):
@@ -211,26 +269,34 @@ class VttES(cmd2.Cmd):
         journal = []
         handouts = []
         characters = []
+        rolltables = []
         obj = {
             'schema_version': 1,
             'maps': maps,
             'journal': journal,
             'handouts': handouts,
             'characters': characters,
+            'rolltables': rolltables,
         }
 
-        for mapd in self.raw_data.get('maps'):
+        for mapd in self.raw_data.get('maps', ()):
             iden = mapd.get('attributes', {}).get('id')
             info = self.map_data.get(iden)
             if info.get('keep'):
                 maps.append(mapd)
         self.poutput(f'Saving {len(maps)} maps.')
 
+        for tabd in self.raw_data.get('rolltables', ()):
+            iden = tabd.get('attributes', {}).get('id')
+            info = self.rolltables.get(iden)
+            if info.get('keep'):
+                rolltables.append(tabd)
+        self.poutput(f'Saving {len(rolltables)} rollable tables.')
+
         for jrnd in self.raw_data.get('journal'):
             iden = jrnd.get('id')
             if self.id2info.get(iden, {}).get('keep'):
                 journal.append(jrnd)
-
 
         for hndd in self.raw_data.get('handouts'):
             iden = hndd.get('attributes', {}).get('id')
@@ -280,6 +346,15 @@ class VttES(cmd2.Cmd):
                     }
             self.map_data[attrs.get('id')] = mnfo
         self.poutput(f'Loaded {len(self.map_data)} maps.')
+
+        self.rolltables = collections.OrderedDict()
+        for srct in data.get('rolltables', ()):
+            attrs = srct.get('attributes')
+            tnfo = {'name': attrs.get('name', 'No Name?'),
+                    'keep': True,
+                    }
+            self.rolltables[attrs.get('id')] = tnfo
+        self.poutput(f'Loaded {len(self.rolltables)} rollable tables.')
 
         self.id2info = {}
         indx = 0
