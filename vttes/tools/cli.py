@@ -293,22 +293,22 @@ class VttES(cmd2.Cmd):
                 rolltables.append(tabd)
         self.poutput(f'Saving {len(rolltables)} rollable tables.')
 
-        for jrnd in self.raw_data.get('journal'):
+        for jrnd in self.raw_data.get('journal', ()):
             iden = jrnd.get('id')
             if self.id2info.get(iden, {}).get('keep'):
                 journal.append(jrnd)
 
-        for hndd in self.raw_data.get('handouts'):
+        for hndd in self.raw_data.get('handouts', ()):
             iden = hndd.get('attributes', {}).get('id')
             if self.id2info.get(iden, {}).get('keep'):
                 handouts.append(hndd)
         self.poutput(f'Saving {len(handouts)} handouts.')
 
-        for chrd in self.raw_data.get('characters'):
+        for chrd in self.raw_data.get('characters', ()):
             iden = chrd.get('attributes', {}).get('id')
             if self.id2info.get(iden, {}).get('keep'):
                 characters.append(chrd)
-        self.poutput(f'Saving {len(handouts)} characters.')
+        self.poutput(f'Saving {len(characters)} characters.')
 
         self.poutput(f'Writing data to {args.outfile}')
         buf = json.dumps(obj, sort_keys=True, indent=2).encode()
@@ -358,7 +358,7 @@ class VttES(cmd2.Cmd):
 
         self.id2info = {}
         indx = 0
-        for handout in data.get('handouts'):
+        for handout in data.get('handouts', ()):
             attrs = handout.get('attributes')
             objdata = {'keep': True,
                        'name': attrs.get('name', 'No Name for Handout?'),
