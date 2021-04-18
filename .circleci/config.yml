@@ -46,7 +46,7 @@ commands:
           command: |
             . venv/bin/activate
             mkdir test-reports
-            circleci tests glob tests/test_*.py | circleci tests split --split-by=timings | xargs python -m pytest -v -s -rs --durations 6 --maxfail 6 -p no:logging --junitxml=test-reports/junit.xml ${COVERAGE_ARGS}
+            circleci tests glob vttes/tests/test_*.py | circleci tests split --split-by=timings | xargs python -m pytest -v -s -rs --durations 6 --maxfail 6 -p no:logging --junitxml=test-reports/junit.xml ${COVERAGE_ARGS}
 
       - codecov/upload:
           file: /home/circleci/repo/coverage.xml
@@ -61,7 +61,7 @@ commands:
 jobs:
 
   python37:
-    parallelism: 2
+    parallelism: 1
     docker:
       - image: circleci/python:3.7
         environment:
@@ -75,7 +75,7 @@ jobs:
       - test_steps_python
 
   python38:
-    parallelism: 2
+    parallelism: 1
     docker:
       - image: circleci/python:3.8
         environment:
