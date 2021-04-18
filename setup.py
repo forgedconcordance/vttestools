@@ -10,7 +10,6 @@ from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.install import install
 
-
 VERSION = '0.0.1'
 
 
@@ -25,6 +24,7 @@ class VerifyVersionCommand(install):
         if tag != VERSION:
             info = f"Git tag: {tag} does not match the version of this app: {VERSION}"
             sys.exit(info)
+
 
 setup(
     name='vttes',
@@ -56,8 +56,9 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
     install_requires=[
-       'cmd2==1.4.0',
+        'cmd2==1.4.0',
         'tabulate==0.8.7',
+        'synapse>=2.33.0,<3.0.0',
     ],
     extras_require={
         # eg:
