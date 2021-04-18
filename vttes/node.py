@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Tuple
 
+# Helper for treating Roll20 journal items like a tree
+
 class Node:
     def __init__(self, name: str, parent=None, idmap=None):
         if idmap is None:
