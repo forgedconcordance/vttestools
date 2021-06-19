@@ -1,0 +1,141 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1618452860.json", 
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"schema_version",
+		"oldId",
+		"name",
+		"avatar",
+		"bio",
+		"gmnotes",
+		"defaulttoken",
+		"tags",
+		"controlledby",
+		"inplayerjournals",
+		"attribs",
+		"abilities"
+	],
+	"properties": {
+		"schema_version": {
+			"$id": "#root/schema_version", 
+			"title": "Schema_version", 
+			"type": "integer",
+			"default": 0
+		},
+		"oldId": {
+			"$id": "#root/oldId", 
+			"title": "Oldid", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"name": {
+			"$id": "#root/name", 
+			"title": "Name", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"avatar": {
+			"$id": "#root/avatar", 
+			"title": "Avatar", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"bio": {
+			"$id": "#root/bio", 
+			"title": "Bio", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"gmnotes": {
+			"$id": "#root/gmnotes", 
+			"title": "Gmnotes", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"defaulttoken": {
+			"$id": "#root/defaulttoken", 
+			"title": "Defaulttoken", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"tags": {
+			"$id": "#root/tags", 
+			"title": "Tags", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"controlledby": {
+			"$id": "#root/controlledby", 
+			"title": "Controlledby", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"inplayerjournals": {
+			"$id": "#root/inplayerjournals", 
+			"title": "Inplayerjournals", 
+			"type": "string",
+			"default": "",
+			"pattern": "^.*$"
+		},
+		"attribs": {
+			"$id": "#root/attribs", 
+			"title": "Attribs", 
+			"type": "array",
+			"default": [],
+			"items":{
+				"$id": "#root/attribs/items", 
+				"title": "Items", 
+				"type": "object",
+				"required": [
+					"name",
+					"current",
+					"max",
+					"id"
+				],
+				"properties": {
+					"name": {
+						"$id": "#root/attribs/items/name", 
+						"title": "Name", 
+						"type": "string",
+						"pattern": "^.*$"
+					},
+					"current": {
+						"$id": "#root/attribs/items/current", 
+						"title": "Current", 
+						"type": ["string", "integer", "number", "boolean"]
+					},
+					"max": {
+						"$id": "#root/attribs/items/max", 
+						"title": "Max", 
+						"type": ["string", "integer", "number"]
+					},
+					"id": {
+						"$id": "#root/attribs/items/id", 
+						"title": "Id", 
+						"type": "string",
+						"pattern": "^.*$"
+					}
+				}
+			}
+
+		},
+		"abilities": {
+			"$id": "#root/abilities", 
+			"title": "Abilities", 
+			"type": "array",
+			"default": []
+		}
+	}
+}
+
