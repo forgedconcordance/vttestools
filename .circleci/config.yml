@@ -177,18 +177,6 @@ jobs:
 
 
 workflows:
-  version: 2
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 12 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - python37
-      - python38
   run_tests:
     jobs:
 
